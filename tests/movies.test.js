@@ -93,7 +93,7 @@ describe("POST /api/movies", () => {
   });
 
   it("should return an error", async () => {
-    const movieWithMissingProps = { color: "1" };
+    const movieWithMissingProps = { color: true };
 
     const response = await request(app)
       .post("/api/movies")
