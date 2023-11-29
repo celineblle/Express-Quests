@@ -38,7 +38,7 @@ const postUser = (req, res) => {
       "INSERT INTO users(firstname, lastname, email, city, language) VALUES ( ?, ?, ?, ?, ?)",
       [firstname, lastname, email, city, language]
     )
-
+    // STATUS CHANGE
     .then(([result]) => {
       res.status(201).send({ id: result.insertId });
     })
@@ -59,14 +59,14 @@ const updateUser = (req, res) => {
     )
     .then(([result]) => {
       if (result.affectedRows === 0) {
-        res.sendStatus(404);
+        res.sendStatus(422);
       } else {
         res.sendStatus(204);
       }
     })
     .catch((err) => {
       console.error(err);
-      res.sendStatus(500);
+      res.sendStatus(422);
     });
 };
 

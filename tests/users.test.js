@@ -1,4 +1,5 @@
 const request = require("supertest");
+const database = require("../database");
 const crypto = require("node:crypto");
 const app = require("../src/app");
 
@@ -72,7 +73,7 @@ describe("POST /api/users", () => {
       .post("/api/users")
       .send(userWithMissingProps);
 
-    expect(response.status).toEqual(500);
+    expect(response.status).toEqual(422);
   });
 });
 
@@ -127,7 +128,7 @@ describe("PUT /api/users/:id", () => {
     expect(userInDatabase).toHaveProperty("lastname");
     expect(userInDatabase.lastname).toStrictEqual(newUser.lastname);
     expect(userInDatabase).toHaveProperty("email");
-    expect(userInDatabase.email).toStrictEqual(newUser.email);
+    expect(userInDatabase.email).toEqual(newUser.email);
     expect(userInDatabase).toHaveProperty("city");
     expect(userInDatabase.city).toStrictEqual(newUser.city);
     expect(userInDatabase).toHaveProperty("language");
@@ -141,7 +142,7 @@ describe("PUT /api/users/:id", () => {
       .put(`/api/users/1`)
       .send(userWithMissingProps);
 
-    expect(response.status).toEqual(500);
+    expect(response.status).toEqual(422);
   });
 
   it("should return no user", async () => {
@@ -155,10 +156,8 @@ describe("PUT /api/users/:id", () => {
 
     const response = await request(app).put("/api/users/0").send(newUser);
 
-    expect(response.status).toEqual(404);
+    expect(response.status).toEqual(422);
   });
 });
-
-const database = require("../database");
 
 afterAll(() => database.end());
