@@ -160,4 +160,35 @@ describe("PUT /api/users/:id", () => {
   });
 });
 
+describe("DELETE /api/users/:id", () => {
+  it("should delete user", async () => {
+    const newUser = {
+      firstname: "Jean",
+      lastname: "Bon",
+      email: `${crypto.randomUUID()}@wild.co`,
+      city: "Nice",
+      language: "French",
+    };
+
+    const [result] = await database.query(
+      "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
+      [
+        newUser.firstname,
+        newUser.lastname,
+        newUser.email,
+        newUser.city,
+        newUser.language,
+      ]
+    );
+    const id = result.insertId;
+
+    const response = await request(app).delete(`/api/users/${id}`);
+
+    expect(response.status).toEqual(204);
+
+    const noUser = await request(app).get(`/api/users/${id}`);
+    expect(noUser.status).toEqual(404);
+  });
+});
+
 afterAll(() => database.end());

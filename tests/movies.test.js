@@ -163,4 +163,35 @@ describe("PUT /api/movies/:id", () => {
   });
 });
 
+describe("DELETE /api/movies/:id", () => {
+  it("should delete movies", async () => {
+    const newMovie = {
+      title: "La Planete Sauvage",
+      director: "Rene Laloux",
+      year: "1973",
+      color: "1",
+      duration: 72,
+    };
+
+    const [result] = await database.query(
+      "INSERT INTO movies(title, director, year, color, duration) VALUE (?, ?, ?, ?, ?)",
+      [
+        newMovie.title,
+        newMovie.director,
+        newMovie.year,
+        newMovie.color,
+        newMovie.duration,
+      ]
+    );
+    const id = result.insertId;
+
+    const response = await request(app).delete(`/api/movies/${id}`);
+
+    expect(response.status).toEqual(204);
+
+    const noMovie = await request(app).get(`/api/movies/${id}`);
+    expect(noMovie.status).toEqual(404);
+  });
+});
+
 afterAll(() => database.end());
